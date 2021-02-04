@@ -1,0 +1,8 @@
+<form action="/" method="POST">
+  <input type="url" name="url" placeholder="請輸入網址" required>
+  <button type="submit">Shorten</button>
+</form>
+
+{{#if newurl}}
+<p style="background:skyblue;padding:10px;">{{newurl}}</p>
+{{/if}}
