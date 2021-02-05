@@ -2,6 +2,21 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 
+const generateRandom = require('./models/generateRandom')
+const Url = require('./models/url')
+
+// mongodb connect
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost/shorten-url', { useNewUrlParser: true, useUnifiedTopology: true })
+const db = mongoose.connection
+db.on('error', () => {
+  console.log('mongodb error!')
+})
+db.once('open', () => {
+  console.log('mongodb connected!')
+})
+
+
 const app = express()
 const PORT = 3000
 
@@ -10,15 +25,32 @@ app.set('view engine', 'hbs')
 
 app.use(bodyParser.urlencoded({ extended: true }))
 
+// render index page
 app.get('/', (req, res) => {
   res.render('index')
 })
 
+// storage newurl & oldurl
 app.post('/', (req, res) => {
-  const url = req.body.url
-  const myurl = `http://localhost:${PORT}/`
-  const newurl = myurl + generateRandom(5)
-  res.render('index', { newurl })
+  const urlData = req.body
+  Url.findOne({ url: urlData.url })
+    .lean()
+    .then(url => {
+      if (!url) {
+        urlData.random = generateRandom(5)
+        Url.create(urlData)
+        res.render('index', { urlData })
+      } else {
+        res.render('index', { url })
+      }
+    })
+})
+
+// use newurl to get into oldurl
+app.get('/:random', (req, res) => {
+  const random = req.params.random
+  return Url.findOne({ random })
+    .then(url => res.redirect(url.url))
 })
 
 app.listen(PORT, () => {
@@ -28,12 +60,3 @@ app.listen(PORT, () => {
 
 // "https://shorten-url.herokuapp.com/"
 
-// 產生 5 碼英數組合
-function generateRandom(amount) {
-  const randomItems = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopurstuvwxyz'
-  let random = ''
-  for (let i = 0; i < amount; i++) {
-    random += randomItems[Math.floor(Math.random() * randomItems.length)]
-  }
-  return random
-}

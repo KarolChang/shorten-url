@@ -3,6 +3,12 @@
   <button type="submit">Shorten</button>
 </form>
 
-{{#if newurl}}
-<p style="background:skyblue;padding:10px;">{{newurl}}</p>
+{{#if url}}
+<p style="background:yellowgreen;padding:10px;">{{url.url}}</p>
+<p style="background:skyblue;padding:10px;">http://localhost:3000/{{url.random}}</p>
+{{/if}}
+
+{{#if urlData}}
+<p style="background:yellowgreen;padding:10px;">{{urlData.url}}</p>
+<p style="background:skyblue;padding:10px;">http://localhost:3000/{{urlData.random}}</p>
 {{/if}}
