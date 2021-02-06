@@ -15,8 +15,7 @@ function checkUrl(urlData, amount, res) {
 
 // check usable random > 0 or not
 function checkUsableRandom(amount, urlData, res) {
-  // const randomItems = '12345678900ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopurstuvwxyz'
-  const randomItems = 'abc123'
+  const randomItems = '12345678900ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopurstuvwxyz'
   const count = randomItems.length ** amount
   Url.find()
     .lean()
@@ -60,5 +59,5 @@ function saveUrlAndRenderIndex(urlData, random, res) {
     .then(() => res.render('index', { urlData }))
 }
 
-// export modules
+// export module
 module.exports = checkUrl
