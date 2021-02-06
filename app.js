@@ -31,20 +31,63 @@ app.get('/', (req, res) => {
 })
 
 // storage newurl & oldurl
+// 1. function
 app.post('/', (req, res) => {
   const urlData = req.body
+  const amount = 1
+  const random = checkRandom(generateRandom(amount), amount)
+  console.log(random)
   Url.findOne({ url: urlData.url })
     .lean()
     .then(url => {
       if (!url) {
-        urlData.random = generateRandom(5)
-        Url.create(urlData)
-        res.render('index', { urlData })
+        // 檢查 random 是否存在資料庫
+        urlData.random = random
+        return Url.create(urlData)
+          .then(() => res.render('index', { urlData }))
       } else {
         res.render('index', { url })
       }
     })
 })
+// 拿到random > 比對random是否存在資料庫 > 存在:重新選擇 > 不存在:return random
+function checkRandom(random, amount) {
+  Url.findOne({ random: random })
+    .lean()
+    .then(item => {
+      if (!item) {
+        return random
+      } else {
+        checkRandom(generateRandom(amount), amount)
+      }
+    })
+}
+
+// 2. 
+// app.post('/', (req, res) => {
+//   const urlData = req.body
+//   const amount = 1
+//   Url.findOne({ url: urlData.url })
+//     .lean()
+//     .then(url => {
+//       if (!url) {
+//         const randomItem = generateRandom(amount)
+//         Url.findOne({ random: randomItem })
+//           .lean()
+//           .then(random => {
+//             if (!random) {
+//               urlData.random = randomItem
+//               return Url.create(urlData)
+//                 .then(() => res.render('index', { urlData }))
+//             } else {
+//               // 123
+//             }
+//           })
+//       } else {
+//         res.render('index', { url })
+//       }
+//     })
+// })
 
 // use newurl to get into oldurl
 app.get('/:random', (req, res) => {
