@@ -1,7 +1,7 @@
+// require modules
 const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
-
 const generateRandom = require('./models/generateRandom')
 const Url = require('./models/url')
 
@@ -16,78 +16,79 @@ db.once('open', () => {
   console.log('mongodb connected!')
 })
 
-
+// get app
 const app = express()
 const PORT = 3000
-
+// set template engine
 app.engine('hbs', exphbs({ defaultLayout: 'main', extname: 'hbs' }))
 app.set('view engine', 'hbs')
-
+// set body-parser
 app.use(bodyParser.urlencoded({ extended: true }))
 
+// set routes
 // render index page
 app.get('/', (req, res) => {
   res.render('index')
 })
 
-// storage newurl & oldurl
-// 1. function
+// variables
+const randomItems = '12345678900ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopurstuvwxyz'
+const amount = 5
+
+// save new url & old url in DB
 app.post('/', (req, res) => {
   const urlData = req.body
-  const amount = 1
-  const random = checkRandom(generateRandom(amount), amount)
-  console.log(random)
+  checkUrl(urlData, amount, res)
+})
+
+// check this url in the DB or not
+function checkUrl(urlData, amount, res) {
   Url.findOne({ url: urlData.url })
     .lean()
     .then(url => {
       if (!url) {
-        // 檢查 random 是否存在資料庫
-        urlData.random = random
-        return Url.create(urlData)
-          .then(() => res.render('index', { urlData }))
+        checkUsableRandom(amount, urlData, res)
       } else {
         res.render('index', { url })
       }
     })
-})
-// 拿到random > 比對random是否存在資料庫 > 存在:重新選擇 > 不存在:return random
-function checkRandom(random, amount) {
-  Url.findOne({ random: random })
+}
+
+// check usable random > 0 or not
+function checkUsableRandom(amount, urlData, res) {
+  const count = randomItems.length ** amount
+  Url.find()
     .lean()
-    .then(item => {
-      if (!item) {
-        return random
+    .then(url => {
+      if ((Object.keys(url)).length >= count) {
+        const error = true
+        res.render('index', { error })
       } else {
-        checkRandom(generateRandom(amount), amount)
+        const random = generateRandom(amount, randomItems)
+        checkRandom(random, amount, urlData, res)
       }
     })
 }
 
-// 2. 
-// app.post('/', (req, res) => {
-//   const urlData = req.body
-//   const amount = 1
-//   Url.findOne({ url: urlData.url })
-//     .lean()
-//     .then(url => {
-//       if (!url) {
-//         const randomItem = generateRandom(amount)
-//         Url.findOne({ random: randomItem })
-//           .lean()
-//           .then(random => {
-//             if (!random) {
-//               urlData.random = randomItem
-//               return Url.create(urlData)
-//                 .then(() => res.render('index', { urlData }))
-//             } else {
-//               // 123
-//             }
-//           })
-//       } else {
-//         res.render('index', { url })
-//       }
-//     })
-// })
+// check this random is in DB or not 
+function checkRandom(random, amount, urlData, res) {
+  Url.findOne({ random: random })
+    .lean()
+    .then(item => {
+      if (!item) {
+        saveUrlAndRenderIndex(urlData, random, res)
+      } else {
+        checkRandom(generateRandom(amount, randomItems), amount, urlData, res)
+      }
+    })
+}
+
+// save the new url in DB and render on index page
+function saveUrlAndRenderIndex(urlData, random, res) {
+  urlData.random = random
+  return Url.create(urlData)
+    .then(() => res.render('index', { urlData }))
+}
 
 // use newurl to get into oldurl
 app.get('/:random', (req, res) => {
