@@ -2,8 +2,8 @@
 const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
-const generateRandom = require('./models/generateRandom')
 const Url = require('./models/url')
+const checkUrl = require('./models/checkUrl')
 
 // mongodb connect
 const mongoose = require('mongoose')
@@ -31,64 +31,12 @@ app.get('/', (req, res) => {
   res.render('index')
 })
 
-// variables
-const randomItems = '12345678900ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopurstuvwxyz'
-const amount = 5
-
 // save new url & old url in DB
 app.post('/', (req, res) => {
   const urlData = req.body
+  const amount = 1
   checkUrl(urlData, amount, res)
 })
-
-// check this url in the DB or not
-function checkUrl(urlData, amount, res) {
-  Url.findOne({ url: urlData.url })
-    .lean()
-    .then(url => {
-      if (!url) {
-        checkUsableRandom(amount, urlData, res)
-      } else {
-        res.render('index', { url })
-      }
-    })
-}
-
-// check usable random > 0 or not
-function checkUsableRandom(amount, urlData, res) {
-  const count = randomItems.length ** amount
-  Url.find()
-    .lean()
-    .then(url => {
-      if ((Object.keys(url)).length >= count) {
-        const error = true
-        res.render('index', { error })
-      } else {
-        const random = generateRandom(amount, randomItems)
-        checkRandom(random, amount, urlData, res)
-      }
-    })
-}
-
-// check this random is in DB or not 
-function checkRandom(random, amount, urlData, res) {
-  Url.findOne({ random: random })
-    .lean()
-    .then(item => {
-      if (!item) {
-        saveUrlAndRenderIndex(urlData, random, res)
-      } else {
-        checkRandom(generateRandom(amount, randomItems), amount, urlData, res)
-      }
-    })
-}
-
-// save the new url in DB and render on index page
-function saveUrlAndRenderIndex(urlData, random, res) {
-  urlData.random = random
-  return Url.create(urlData)
-    .then(() => res.render('index', { urlData }))
-}
 
 // use newurl to get into oldurl
 app.get('/:random', (req, res) => {
