@@ -1,18 +1,41 @@
-<form action="/" method="POST">
-  <input type="url" name="url" placeholder="請輸入網址" required>
-  <button type="submit">Shorten</button>
-</form>
+<div class="container m-5" style="padding:0 250px;">
+  <h1 style="font-family:'Lato';margin-bottom:0.5em;text-align:center;">URL Shortener</h1>
+  <form action="/" method="POST">
+    <div class="input-group mb-5">
+      <input type="url" class="form-control" name="url" placeholder="請輸入網址" aria-label="Recipient's username"
+        aria-describedby="basic-addon2">
+      <div class="input-group-append">
+        <button class="btn btn-outline-warning" type="submit">Shorten</button>
+      </div>
+    </div>
+  </form>
 
-{{#if url}}
-<p style="background:yellowgreen;padding:10px;">{{url.url}}</p>
-<p style="background:skyblue;padding:10px;">http://localhost:3000/{{url.random}}</p>
-{{/if}}
+  {{#if url}}
+  <h4>Origin URL</h4>
+  <div class="alert alert-secondary" role="alert" style="margin-bottom: 3em;">
+    {{url.url}}
+  </div>
+  <h4 style="color: teal;">Shorten URL</h4>
+  <div class="alert alert-success" role="alert">
+    http://localhost:3000/{{url.random}}
+  </div>
+  {{/if}}
 
-{{#if urlData}}
-<p style="background:yellowgreen;padding:10px;">{{urlData.url}}</p>
-<p style="background:skyblue;padding:10px;">http://localhost:3000/{{urlData.random}}</p>
-{{/if}}
+  {{#if urlData}}
+  <h4>Origin URL</h4>
+  <div class="alert alert-secondary" role="alert" style="margin-bottom: 3em;">
+    {{urlData.url}}
+  </div>
+  <h4 style="color: teal;">Shorten URL</h4>
+  <div class="alert alert-success" role="alert">
+    http://localhost:3000/{{urlData.random}}
+  </div>
+  {{/if}}
 
-{{#if error}}
-<p style="background:red;padding:10px;">Error!</p>
-{{/if}}
+  {{#if error}}
+  <div class="alert alert-danger" role="alert">
+    ERROR !
+  </div>
+  {{/if}}
+
+</div>
