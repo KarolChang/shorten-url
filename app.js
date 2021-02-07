@@ -3,17 +3,7 @@ const express = require('express')
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 const routes = require('./routes')
-
-// mongodb connect
-const mongoose = require('mongoose')
-mongoose.connect('mongodb://localhost/shorten-url', { useNewUrlParser: true, useUnifiedTopology: true })
-const db = mongoose.connection
-db.on('error', () => {
-  console.log('mongodb error!')
-})
-db.once('open', () => {
-  console.log('mongodb connected!')
-})
+require('./config/mongoose')
 
 // get app
 const app = express()
