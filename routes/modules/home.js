@@ -18,12 +18,5 @@ router.post('/', (req, res) => {
   checkUrl(urlData, amount, res)
 })
 
-// use new url to get into old url
-router.get('/:random', (req, res) => {
-  const random = req.params.random
-  return Url.findOne({ random })
-    .then(url => res.redirect(url.url))
-})
-
 // export module
 module.exports = router
