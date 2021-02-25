@@ -28,6 +28,19 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.min.js"
     integrity="sha384-pQQkAEnwaBkjpqZ8RU1fF1AKtTcHJwFl3pblpTlHXybJjHpMYo79HY3hIi4NKxyj"
     crossorigin="anonymous"></script>
+  <!-- clipboard.js v1.7.1 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js"></script>
+  <script>
+    let clipboard = new Clipboard('#copy')
+    clipboard.on('success', function (e) {
+      e.clearSelection()
+      alert('複製成功')
+    })
+    clipboard.on('error', function (e) {
+      e.clearSelection()
+      alert('複製失敗')
+    })
+  </script>
 </body>
 
 </html>

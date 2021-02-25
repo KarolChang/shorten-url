@@ -17,8 +17,8 @@
   </div>
   <h4 style="color: teal;">Shorten URL</h4>
   <div class="alert alert-success" role="alert">
-    <a href="https://still-reef-15973.herokuapp.com/{{url.random}}"
-      target="_blank">https://still-reef-15973.herokuapp.com/{{url.random}}</a>
+    <input id="url" value="https://still-reef-15973.herokuapp.com/{{url.random}}" style="width:400px;">
+    <button class="btn btn-outline-info" id="copy" data-clipboard-target="#url" style="margin-left: 20px;">copy</button>
   </div>
   {{/if}}
 
@@ -29,8 +29,8 @@
   </div>
   <h4 style="color: teal;">Shorten URL</h4>
   <div class="alert alert-success" role="alert">
-    <a href="https://still-reef-15973.herokuapp.com/{{urlData.random}}"
-      target="_blank">https://still-reef-15973.herokuapp.com/{{urlData.random}}</a>
+    <input id="url" value="https://still-reef-15973.herokuapp.com/{{urlData.random}}" style="width:400px;">
+    <button class="btn btn-outline-info" id="copy" data-clipboard-target="#url" style="margin-left: 20px;">copy</button>
   </div>
   {{/if}}
 

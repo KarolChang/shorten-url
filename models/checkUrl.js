@@ -15,12 +15,12 @@ function checkUrl(urlData, amount, res) {
 
 // check usable random > 0 or not
 function checkUsableRandom(amount, urlData, res) {
-  const randomItems = '12345678900ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopurstuvwxyz'
+  const randomItems = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
   const count = randomItems.length ** amount
   Url.find()
     .lean()
     .then(url => {
-      if ((Object.keys(url)).length >= count) {
+      if (url.length >= count) {
         const error = true
         res.render('index', { error })
       } else {
